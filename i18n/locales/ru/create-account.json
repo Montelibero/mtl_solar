@@ -37,7 +37,7 @@
   "inputs": {
     "import": {
       "helper-text": "Секретный ключ Stellar состоит из 56 алфавитно-цифровых символов и начинается с буквы S",
-      "placeholder": "SABCDEFGH…", // No change needed
+      "placeholder": "SABCDEFGH…",
       "label": "Секретный ключ",
       "title": "Импорт существующего"
     },
@@ -45,7 +45,7 @@
       "explanation-long": "Убедитесь, что на аккаунте, к которому вы присоединяетесь, есть как минимум 2 XLM, чтобы они могли добавить вас в качестве со-подписанта.",
       "explanation-short": "Убедитесь, что аккаунт, к которому вы присоединяетесь, пополнен.",
       "helper-text": "Адрес мультиподписного аккаунта (публичный ключ)",
-      "placeholder": "GABCDEFGH…", // No change needed
+      "placeholder": "GABCDEFGH…",
       "label": "Мультиподписной аккаунт"
     },
     "password": {

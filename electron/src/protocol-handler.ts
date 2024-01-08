@@ -35,7 +35,7 @@ function emitURL(url: string) {
   }
 }
 
-const appReady = new Promise(resolve =>
+const appReady = new Promise<void>(resolve =>
   app.on("ready", () => {
     if (process.platform === "win32" || process.platform === "linux") {
       if (process.argv) {

@@ -1,6 +1,5 @@
 import React from "react"
 import { action } from "@storybook/addon-actions"
-import { storiesOf } from "@storybook/react"
 import { Account } from "~App/contexts/accounts"
 import TransactionList from "../components/TransactionList"
 import { TransactionHistory } from "~Generic/hooks/_caches"
@@ -26,7 +25,8 @@ function SampleTransactions(props: { children: (history: TransactionHistory) => 
   return props.children(history)
 }
 
-storiesOf("TransactionList", module).add("Recent transactions", () => (
+export default { title: "TransactionList" }
+export const RecentTransactions = () => (
   <SampleTransactions>
     {history => (
       <TransactionList
@@ -38,4 +38,4 @@ storiesOf("TransactionList", module).add("Recent transactions", () => (
       />
     )}
   </SampleTransactions>
-))
+)

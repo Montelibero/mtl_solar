@@ -12,7 +12,6 @@ import {
   TransferTransaction
 } from "@satoshipay/stellar-transfer"
 import { action } from "@storybook/addon-actions"
-import { storiesOf } from "@storybook/react"
 import { DesktopTwoColumns } from "../components/Sidebar"
 import { TransferState } from "../util/statemachine"
 import { useWithdrawalState } from "../hooks/useWithdrawalState"
@@ -113,132 +112,124 @@ function WithdrawalDemoState(props: { state: TransferState }) {
   )
 }
 
-storiesOf("Withdrawal", module)
-  .add("Initial", () => (
-    <WithdrawalDemoState
-      state={
-        {
-          step: "initial",
-          formValues: {}
-        } as const
-      }
-    />
-  ))
-  .add("Enter details", () => (
-    <WithdrawalDemoState
-      state={
-        {
-          step: "enter-values",
-          asset: eurt,
-          formValues: {},
-          method: "",
-          transferServer
-        } as const
-      }
-    />
-  ))
-  // .add("Authentication", () => (
-  //   <WithdrawalDemoState state={{
-  //     step: "auth-pending",
-  //     authChallenge,
-  //     webauth,
-  //     withdrawal
-  //   } as const} />
-  // ))
-  .add("Interactive KYC required", () => (
-    <WithdrawalDemoState
-      state={
-        {
-          step: "kyc-pending",
-          deposit: undefined,
-          response: {
-            data: {
-              status: "pending",
-              type: "customer_info_status"
-            },
-            subtype: KYCResponseType.interactive,
-            type: TransferResultType.kyc
+export default { title: "Withdrawal" }
+export const Initial = () => (
+  <WithdrawalDemoState
+    state={
+      {
+        step: "initial",
+        formValues: {}
+      } as const
+    }
+  />
+)
+export const EnterDetails = () => (
+  <WithdrawalDemoState
+    state={
+      {
+        step: "enter-values",
+        asset: eurt,
+        formValues: {},
+        method: "",
+        transferServer
+      } as const
+    }
+  />
+)
+export const InteractiveKYCrequired = () => (
+  <WithdrawalDemoState
+    state={
+      {
+        step: "kyc-pending",
+        deposit: undefined,
+        response: {
+          data: {
+            status: "pending",
+            type: "customer_info_status"
           },
-          withdrawal
-        } as const
-      }
-    />
-  ))
-  .add("Interactive KYC pending", () => (
-    <WithdrawalDemoState
-      state={
-        {
-          step: "kyc-pending",
-          deposit: undefined,
-          didRedirect: true,
-          response: {
-            data: {
-              status: "pending",
-              type: "customer_info_status"
-            },
-            subtype: KYCResponseType.interactive,
-            type: TransferResultType.kyc
+          subtype: KYCResponseType.interactive,
+          type: TransferResultType.kyc
+        },
+        withdrawal
+      } as const
+    }
+  />
+)
+export const InteractiveKYCpending = () => (
+  <WithdrawalDemoState
+    state={
+      {
+        step: "kyc-pending",
+        deposit: undefined,
+        didRedirect: true,
+        response: {
+          data: {
+            status: "pending",
+            type: "customer_info_status"
           },
-          transfer: demoTransaction,
-          withdrawal
-        } as const
-      }
-    />
-  ))
-  .add("KYC denied", () => (
-    <WithdrawalDemoState
-      state={
-        {
-          step: "kyc-pending",
-          deposit: undefined,
-          didRedirect: true,
-          response: {
-            data: {
-              status: "pending",
-              type: "customer_info_status"
-            },
-            subtype: KYCResponseType.interactive,
-            type: TransferResultType.kyc
+          subtype: KYCResponseType.interactive,
+          type: TransferResultType.kyc
+        },
+        transfer: demoTransaction,
+        withdrawal
+      } as const
+    }
+  />
+)
+export const KYCdenied = () => (
+  <WithdrawalDemoState
+    state={
+      {
+        step: "kyc-pending",
+        deposit: undefined,
+        didRedirect: true,
+        response: {
+          data: {
+            status: "pending",
+            type: "customer_info_status"
           },
-          transfer: {
-            ...demoTransaction,
-            message: "We could not verify your identity.",
-            more_info_url: "https://google.com/",
-            status: TransferStatus.error
-          },
-          withdrawal
-        } as const
-      }
-    />
-  ))
-  .add("Transaction details", () => (
-    <WithdrawalDemoState
-      state={
-        {
-          step: "enter-tx-details",
-          deposit: undefined,
-          response: {
-            data: withdrawalSuccessResponse,
-            type: TransferResultType.ok
-          },
-          withdrawal
-        } as const
-      }
-    />
-  ))
-  .add("Success", () => (
-    <WithdrawalDemoState
-      state={
-        {
-          step: "completed",
-          amount: BigNumber(12),
-          deposit: undefined,
-          response: {
-            data: withdrawalSuccessResponse,
-            type: TransferResultType.ok
-          },
-          withdrawal
-        } as const
-      }
-    />
-  ))
+          subtype: KYCResponseType.interactive,
+          type: TransferResultType.kyc
+        },
+        transfer: {
+          ...demoTransaction,
+          message: "We could not verify your identity.",
+          more_info_url: "https://google.com/",
+          status: TransferStatus.error
+        },
+        withdrawal
+      } as const
+    }
+  />
+)
+export const TransactionDetails = () => (
+  <WithdrawalDemoState
+    state={
+      {
+        step: "enter-tx-details",
+        deposit: undefined,
+        response: {
+          data: withdrawalSuccessResponse,
+          type: TransferResultType.ok
+        },
+        withdrawal
+      } as const
+    }
+  />
+)
+export const Success = () => (
+  <WithdrawalDemoState
+    state={
+      {
+        step: "completed",
+        amount: BigNumber(12),
+        deposit: undefined,
+        response: {
+          data: withdrawalSuccessResponse,
+          type: TransferResultType.ok
+        },
+        withdrawal
+      } as const
+    }
+  />
+)

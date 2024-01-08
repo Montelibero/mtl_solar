@@ -1,2 +1,0 @@
-import "./Dialogs"
-import "./TransactionReviewDialog"

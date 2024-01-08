@@ -1,6 +1,5 @@
 import React from "react"
 import Button from "@material-ui/core/Button"
-import { storiesOf } from "@storybook/react"
 import NotificationContainer from "../components/NotificationContainer"
 import { NotificationsContext, NotificationsProvider } from "~App/contexts/notifications"
 
@@ -19,7 +18,8 @@ function Buttons(props: { children: React.ReactNode }) {
   )
 }
 
-storiesOf("Notifications", module).add("All", () => (
+export default { title: "Notifications" }
+export const All = () => (
   <NotificationsProvider>
     <NotificationContainer />
     <NotificationsContext.Consumer>
@@ -44,4 +44,4 @@ storiesOf("Notifications", module).add("All", () => (
       )}
     </NotificationsContext.Consumer>
   </NotificationsProvider>
-))
+)

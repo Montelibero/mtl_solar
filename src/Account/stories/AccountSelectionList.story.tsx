@@ -1,5 +1,4 @@
 import React from "react"
-import { storiesOf } from "@storybook/react"
 import AccountSelectionList from "../components/AccountSelectionList"
 import { Account } from "~App/contexts/accounts"
 
@@ -26,8 +25,8 @@ const accounts: Account[] = [
   }
 ]
 
-storiesOf("AccountSelection", module)
-  .add("AccountSelectionList", () => <AccountSelectionList testnet={true} accounts={accounts} />)
-  .add("AccountSelectionList disabled", () => (
-    <AccountSelectionList disabled={true} testnet={true} accounts={accounts} />
-  ))
+export default { title: "AccountSelection" }
+export const AccountSelectionListExample = () => <AccountSelectionList testnet={true} accounts={accounts} />
+export const AccountSelectionListDisabledExample = () => (
+  <AccountSelectionList disabled={true} testnet={true} accounts={accounts} />
+)

@@ -1,6 +1,5 @@
 import React from "react"
 import Button from "@material-ui/core/Button"
-import { storiesOf } from "@storybook/react"
 import { MainErrorBoundary } from "../components/ErrorBoundaries"
 import { VerticalLayout } from "~Layout/components/Box"
 
@@ -19,10 +18,11 @@ function Failing() {
   )
 }
 
-storiesOf("MainErrorBoundary", module).add("MainErrorBoundary", () => (
+export default { title: "MainErrorBoundary" }
+export const MainErrorBoundaryExample = () => (
   <VerticalLayout height="400px" justifyContent="center">
     <MainErrorBoundary>
       <Failing />
     </MainErrorBoundary>
   </VerticalLayout>
-))
+)

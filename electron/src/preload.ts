@@ -6,8 +6,8 @@ function sendMessage<Message extends keyof IPC.MessageType>(
   messageType: Message,
   callID: number,
   ...args: IPC.MessageArgs<Message>
-): Promise<IPC.MessageReturnType<Message>> {
-  const responsePromise = new Promise<IPC.MessageReturnType<Message>>((resolve, reject) => {
+): Promise<IPC.MessageReturnType<Message> | void> {
+  const responsePromise = new Promise<IPC.MessageReturnType<Message> | void>((resolve, reject) => {
     const listener = (event: Electron.Event, data: any) => {
       if (data.messageID === callID) {
         ipcRenderer.removeListener(messageType, listener)

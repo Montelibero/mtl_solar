@@ -1,6 +1,5 @@
 import React from "react"
 import Button from "@material-ui/core/Button"
-import { storiesOf } from "@storybook/react"
 import { Asset, Server, Transaction } from "stellar-sdk"
 import TransactionReviewDialog from "../components/TransactionReviewDialog"
 import { Account, AccountsContext, AccountsProvider } from "~App/contexts/accounts"
@@ -54,45 +53,44 @@ function DialogContainer(props: DialogContainerProps) {
   )
 }
 
-storiesOf("Dialogs", module)
-  .addDecorator(story => <AccountsProvider>{story()}</AccountsProvider>)
-  .add("TxConfirmationDrawer without password", () => (
-    <AccountsContext.Consumer>
-      {({ accounts }) =>
-        accounts[0] ? (
-          <DialogContainer account={accounts[0]}>
-            {({ open, onClose, transaction }) => (
-              <TransactionReviewDialog
-                account={accounts[0]}
-                open={open}
-                onClose={onClose}
-                onSubmitTransaction={() => undefined}
-                showSubmissionProgress={false}
-                transaction={transaction}
-              />
-            )}
-          </DialogContainer>
-        ) : null
-      }
-    </AccountsContext.Consumer>
-  ))
-  .add("TxConfirmationDrawer with password", () => (
-    <AccountsContext.Consumer>
-      {({ accounts }) =>
-        accounts[1] ? (
-          <DialogContainer account={accounts[1]}>
-            {({ open, onClose, transaction }) => (
-              <TransactionReviewDialog
-                account={accounts[1]}
-                open={open}
-                onClose={onClose}
-                onSubmitTransaction={() => undefined}
-                showSubmissionProgress={false}
-                transaction={transaction}
-              />
-            )}
-          </DialogContainer>
-        ) : null
-      }
-    </AccountsContext.Consumer>
-  ))
+export default { title: "Dialogs", decorators: [story => <AccountsProvider>{story()}</AccountsProvider>] }
+export const TxConfirmationDrawerWithoutPassword = () => (
+  <AccountsContext.Consumer>
+    {({ accounts }) =>
+      accounts[0] ? (
+        <DialogContainer account={accounts[0]}>
+          {({ open, onClose, transaction }) => (
+            <TransactionReviewDialog
+              account={accounts[0]}
+              open={open}
+              onClose={onClose}
+              onSubmitTransaction={() => undefined}
+              showSubmissionProgress={false}
+              transaction={transaction}
+            />
+          )}
+        </DialogContainer>
+      ) : null
+    }
+  </AccountsContext.Consumer>
+)
+export const TxConfirmationDrawerWithPassword = () => (
+  <AccountsContext.Consumer>
+    {({ accounts }) =>
+      accounts[1] ? (
+        <DialogContainer account={accounts[1]}>
+          {({ open, onClose, transaction }) => (
+            <TransactionReviewDialog
+              account={accounts[1]}
+              open={open}
+              onClose={onClose}
+              onSubmitTransaction={() => undefined}
+              showSubmissionProgress={false}
+              transaction={transaction}
+            />
+          )}
+        </DialogContainer>
+      ) : null
+    }
+  </AccountsContext.Consumer>
+)
