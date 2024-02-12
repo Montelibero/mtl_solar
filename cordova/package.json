@@ -11,17 +11,10 @@
     "plugins": {
       "cordova-plugin-secure-storage": {},
       "cordova-plugin-dialogs": {},
-      "cordova-plugin-network-information": {},
-      "phonegap-plugin-barcodescanner": {
-        "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      },
       "cordova-plugin-splashscreen": {},
       "cordova-clipboard": {},
       "cordova-plugin-device": {},
       "cordova-plugin-safariviewcontroller": {},
-      "cordova-plugin-fingerprint-aio": {
-        "FACEID_USAGE_DESCRIPTION": "Unlock Solar…"
-      },
       "cordova-plugin-customurlscheme": {
         "URL_SCHEME": "web+stellar",
         "ANDROID_SCHEME": " ",
@@ -29,31 +22,39 @@
         "ANDROID_PATHPREFIX": "/"
       },
       "cordova-plugin-ionic-keyboard": {},
-      "cordova-plugin-local-notification": {},
-      "cordova-plugin-androidx-adapter": {}
+      "cordova-plugin-androidx-adapter": {},
+      "@red-mobile/cordova-plugin-barcodescanner": {
+        "ANDROIDX_LEGACY_SUPPORT_V4_VERSION": "1.0.0"
+      },
+      "cordova-plugin-fingerprint-aio": {
+        "FACEID_USAGE_DESCRIPTION": "Login now...."
+      },
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-proguard": {}
     }
   },
   "dependencies": {
-    "cordova": "^11.0.0",
+    "cordova": "^12.0.0",
     "cordova-clipboard": "^1.2.1",
     "cordova-plugin-badge": "^0.8.8",
-    "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-dialogs": "^2.0.1",
-    "cordova-plugin-fingerprint-aio": "^3.0.1",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
-    "cordova-plugin-local-notification": "^0.9.0-beta.2",
-    "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-safariviewcontroller": "^2.0.0",
-    "cordova-plugin-splashscreen": "^6.0.0",
-    "phonegap-plugin-barcodescanner": "^8.0.1"
+    "cordova-plugin-splashscreen": "^6.0.0"
   },
   "devDependencies": {
+    "@moodlehq/cordova-plugin-local-notification": "^0.9.0-moodle.11",
+    "@red-mobile/cordova-plugin-barcodescanner": "^9.1.0",
     "compare-func": "^2.0.0",
-    "cordova-android": "^10.1.1",
-    "cordova-fetch": "^3.0.1",
-    "cordova-ios": "^6.1.1",
+    "cordova-android": "^12.0.1",
+    "cordova-fetch": "^4.0.0",
+    "cordova-ios": "^7.0.1",
     "cordova-plugin-androidx-adapter": "^1.1.3",
     "cordova-plugin-customurlscheme": "github:bytelabsco/Custom-URL-scheme",
+    "cordova-plugin-device": "^2.1.0",
+    "cordova-plugin-fingerprint-aio": "^5.0.1",
+    "cordova-plugin-network-information": "^3.0.0",
+    "cordova-plugin-proguard": "^2.2.0",
     "cordova-plugin-secure-storage": "github:satoshipay/cordova-plugin-secure-storage",
     "dotenv-cli": "^2.0.0",
     "json": "^10.0.0",
