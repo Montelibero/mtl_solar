@@ -1,18 +1,41 @@
-.cache/
-.idea/
-.vscode/
+# hidden files
+.*
+!/.gitignore
+!/.gitattributes
+!/.gitlab-ci.yml
+!/.github
+!/.storybook
+!/.babelrc.json
+!/.eslintrc.json
+!/.prettierrc
+
+# OS files
+Thumbs.db
+
+# Keystore files
+*.jks
+*.keystore
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# build files
+*.apk
+*.apk.*
+*.aar
+*.ap_
+*.aab
+*.dex
+*.class
+*.log
+output.json
 dist/
 node_modules/
-storybook-static/
-.DS_Store
-Thumbs.db
-*.env
-*.sublime-project
-*.sublime-workspace
-*.log
-.eslintcache
 
+# storybook
+storybook-static/
+
+# cordova
 cordova/config.xml
 cordova/platforms/
 cordova/plugins/
-!cordova/.env
