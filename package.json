@@ -13,7 +13,7 @@
   "repository": "github:montelibero/mtl_solar",
   "main": "./electron/lib/index.prod.js",
   "scripts": {
-    "precommit": "lint-staged",
+    "prepare": "husky",
     "lint:fix": "eslint --fix '{src,stories}/**/*.{ts,tsx}'",
     "prettier": "prettier --write '{src,stories}/**/*.{ts,tsx}' *.md electron/src/*.ts",
     "storybook": "storybook dev -p 9001 -c .storybook",
@@ -33,8 +33,7 @@
     "dev": "run-p prebuild:electron:ts:watch dev:bundle dev:app:delayed",
     "dev:app": "cross-env NODE_ENV=development TS_NODE_PROJECT=./electron/tsconfig.json run-electron -r ts-node/register/transpile-only ./electron/src/index.dev",
     "dev:app:delayed": "wait-on -t 2000 && run-s dev:app",
-    "dev:bundle": "cross-env NODE_ENV=development parcel watch ./src/index.dev.njk --hmr-hostname localhost --public-url=./",
-    "prepare": "husky"
+    "dev:bundle": "cross-env NODE_ENV=development parcel watch ./src/index.dev.njk --hmr-hostname localhost --public-url=./"
   },
   "lint-staged": {
     "ignore": [
