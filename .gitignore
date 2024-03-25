@@ -4,6 +4,7 @@
 !/.gitattributes
 !/.gitlab-ci.yml
 !/.github
+!/.husky
 !/.storybook
 !/.babelrc.json
 !/.eslintrc.json
