@@ -1,7 +1,7 @@
 # hidden files
 .*
-!/.gitignore
-!/.gitattributes
+!.gitignore
+!.gitattributes
 !/.gitlab-ci.yml
 !/.github
 !/.husky
@@ -29,7 +29,6 @@ local.properties
 *.dex
 *.class
 *.log
-output.json
 dist/
 node_modules/
 
