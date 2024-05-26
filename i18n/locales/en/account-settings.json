@@ -21,7 +21,7 @@
       "text": "Send remaining funds to"
     },
     "text": {
-      "1": "Are you sure you want to remove the account \"{{accountName}}\" from Solar? You can still use it elsewhere if you save the secret key.",
+      "1": "Are you sure you want to remove the account \"{{accountName}}\" from Montelibero Wallet? You can still use it elsewhere if you save the secret key.",
       "2": " Make sure to backup your secret key or merge the funds into another account of yours, since there are still funds left!"
     },
     "title": "Confirm Account Removal",
@@ -108,8 +108,8 @@
       "single-signature": "Choose the key that should be the account's single signer."
     },
     "preset-description-extra": {
-      "m-out-of-n": "Go to 'Add Account' > 'Join Account' in the co-signing MTL Solar wallet to create a new co-signer's key.",
-      "one-out-of-n": "Go to 'Add Account' > 'Join Account' in the co-signing MTL Solar wallet to create a new co-signer's key."
+      "m-out-of-n": "Go to 'Add Account' > 'Join Account' in the co-signing Montelibero Wallet to create a new co-signer's key.",
+      "one-out-of-n": "Go to 'Add Account' > 'Join Account' in the co-signing Montelibero Wallet to create a new co-signer's key."
     },
     "preset-selector": {
       "options": {

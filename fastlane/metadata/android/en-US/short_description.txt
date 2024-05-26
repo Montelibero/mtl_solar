@@ -1,1 +1,1 @@
-Send/receive/trade XLM + tokens and secure accounts with multi-sig with Solar.
+Send/receive/trade XLM + tokens and secure accounts with multi-sig with Montelibero Wallet.

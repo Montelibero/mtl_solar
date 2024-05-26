@@ -82,7 +82,7 @@ function TermsAndConditions(props: Props) {
                   <ExternalLink href="https://solar.montelibero.org/terms.html">Terms and Conditions</ExternalLink>{" "}
                   &amp;
                   <ExternalLink href="https://solar.montelibero.org/privacy.html">Privacy policy</ExternalLink> of
-                  Solar.
+                  Montelibero Wallet.
                 </Trans>
               </CheckboxLabel>
             }

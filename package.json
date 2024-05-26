@@ -1,6 +1,6 @@
 {
   "name": "org.montelibero.solar",
-  "displayName": "MTL Solar",
+  "displayName": "Montelibero Wallet",
   "version": "1.0.0",
   "description": "Wallet for the Stellar payment network by Montelibero.",
   "license": "MIT",

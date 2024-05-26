@@ -169,7 +169,7 @@
         "primary": "MoonPay",
         "secondary": "Comprar inmediatamente Lúmenes Stellar usando tu tarjeta de débito / crédito o Apple Pay"
       },
-      "legal-confirmation": " Serás redirigido a moonpay.io, un servicio externo. El proceso de depósito es operado por Moon Pay Ltd, no por Solar o Montelibero. <1 /> <2 /> Por favor contacte a moonpay.io para consultas sobre tu depósito."
+      "legal-confirmation": " Serás redirigido a moonpay.io, un servicio externo. El proceso de depósito es operado por Moon Pay Ltd, no por Montelibero. <1 /> <2 /> Por favor contacte a moonpay.io para consultas sobre tu depósito."
     },
     "title": "Compra lúmenes Stellar"
   },

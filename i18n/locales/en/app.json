@@ -53,7 +53,7 @@
         "error": "Enable in operating system settings",
         "granted": {
           "title": "Notifications enabled",
-          "text": "MTL Solar Wallet will now show notifications"
+          "text": "Montelibero Wallet will now show notifications"
         },
         "message": "Enable app notifications"
       }
@@ -63,13 +63,13 @@
     "action": {
       "confirm": "Confirm"
     },
-    "header": "Welcome to MTL Solar Wallet",
+    "header": "Welcome to Montelibero Wallet",
     "checkbox": {
       "1": {
-        "label": "I understand that I am responsible for the safety of my funds and that MTL Solar Wallet is not able to recover my funds in case of data loss or if I lose my credentials."
+        "label": "I understand that I am responsible for the safety of my funds and that Montelibero Wallet is not able to recover my funds in case of data loss or if I lose my credentials."
       },
       "2": {
-        "label": "I have read, understood and agree to the <1>Terms and Conditions</1> <2>&amp;</2> <3>Privacy policy</3> of MTL Solar Wallet."
+        "label": "I have read, understood and agree to the <1>Terms and Conditions</1> <2>&amp;</2> <3>Privacy policy</3> of Montelibero Wallet."
       }
     }
   }

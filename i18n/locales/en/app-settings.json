@@ -81,7 +81,7 @@
     }
   },
   "trusted-services": {
-    "info": "Trusted Services are web services that are allowed to interact with MTL Solar wallet by requesting account data or proposing transactions. You can add a new service once it tries to interact with Solar.",
+    "info": "Trusted Services are web services that are allowed to interact with Montelibero Wallet by requesting account data or proposing transactions. You can add a new service once it tries to interact with Montelibero Wallet.",
     "service-selection": {
       "action": {
         "cancel": "Cancel",

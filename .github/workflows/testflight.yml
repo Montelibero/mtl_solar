@@ -67,7 +67,7 @@ jobs:
 
       - name: Upload to Testflight
         run: |
-          IPA_PATH="${{ github.workspace }}/cordova/platforms/ios/build/Release-iphoneos/Montelibero Solar.ipa"
+          IPA_PATH="${{ github.workspace }}/cordova/platforms/ios/build/Release-iphoneos/Montelibero Wallet.ipa"
           xcrun altool --validate-app -f "$IPA_PATH" -t ios --username ${{ secrets.APPLE_USER }} --password ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           xcrun altool --upload-app -f "$IPA_PATH" -t ios --username ${{ secrets.APPLE_USER }} --password ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
 

@@ -81,7 +81,7 @@ const accountDataWaitingCache = new Map<string, ReturnType<typeof waitForAccount
 const fetchQueuesByHorizon = new Map<string, PromiseQueue>()
 
 const identification = {
-  "X-Client-Name": "Solar",
+  "X-Client-Name": "Montelibero Wallet",
   "X-Client-Version": pkg.version
 }
 

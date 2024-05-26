@@ -81,7 +81,7 @@
     }
   },
   "trusted-services": {
-    "info": "I servizi attendibili sono servizi Web che possono interagire con il portafoglio solare richiedendo i dati dell'account o proponendo transazioni. È possibile aggiungere un nuovo servizio una volta che tenta di interagire con Solar.",
+    "info": "I servizi attendibili sono servizi Web che possono interagire con il portafoglio solare richiedendo i dati dell'account o proponendo transazioni. È possibile aggiungere un nuovo servizio una volta che tenta di interagire con Montelibero Wallet.",
     "service-selection": {
       "action": {
         "cancel": "Annulla",

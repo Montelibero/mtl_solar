@@ -22,7 +22,7 @@ export async function bioAuthenticate() {
     Fingerprint.show(
       {
         title: "Unlock Solar",
-        description: device && device.platform === "iOS" ? "Unlock your MTL Solar wallet" : undefined
+        description: device && device.platform === "iOS" ? "Unlock your Montelibero wallet" : undefined
       },
       resolve,
       reject

@@ -90,18 +90,6 @@ function LiveAccountContextMenuItems(
         label={t("account.context-menu.trade.label")}
         onClick={closeAndCall(props.onTrade)}
       />
-      <AccountContextMenuItem
-        disabled={!isSigner || !props.onDeposit}
-        icon={<CallReceivedIcon />}
-        label={t("account.context-menu.deposit.label")}
-        onClick={closeAndCall(accountData.balances.length > 1 ? props.onDeposit : props.onPurchaseLumens)}
-      />
-      <AccountContextMenuItem
-        disabled={!activated || !props.onWithdraw}
-        icon={<CallMadeIcon />}
-        label={t("account.context-menu.withdraw.label")}
-        onClick={closeAndCall(props.onWithdraw)}
-      />
       <Divider />
       <AccountContextMenuItem
         disabled={!activated || !props.onManageAssets}

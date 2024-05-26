@@ -108,8 +108,8 @@
       "single-signature": "Escoge la clave que será la firma única de la cuenta."
     },
     "preset-description-extra": {
-      "m-out-of-n": "Ve a 'Agregar cuenta' > 'Unirse a la cuenta' en Solar para crear una nueva clave de co-firmante.",
-      "one-out-of-n": "Ve a 'Agregar cuenta' > 'Unirse a la cuenta' en Solar para crear una nueva clave de co-firmante."
+      "m-out-of-n": "Ve a 'Agregar cuenta' > 'Unirse a la cuenta' en Montelibero Wallet para crear una nueva clave de co-firmante.",
+      "one-out-of-n": "Ve a 'Agregar cuenta' > 'Unirse a la cuenta' en Montelibero Wallet para crear una nueva clave de co-firmante."
     },
     "preset-selector": {
       "options": {

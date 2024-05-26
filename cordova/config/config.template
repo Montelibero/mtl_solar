@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.montelibero.solar" version="$PACKAGE_VERSION" android-versionCode="$ANDROID_VERSIONCODE" ios-CFBundleVersion="$IOS_BUNDLE_VERSION" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
-    <name short="MTL Solar">Montelibero Solar</name>
+    <name short="Montelibero Wallet">Montelibero Wallet</name>
     <description>
         Wallet for the Stellar payment network by Montelibero.
     </description>
     <author email="solar@montelibero.org" href="https://solar.montelibero.org/">
-        Montelibero Solar Team
+        Montelibero Wallet Team
     </author>
     <content src="$HTML_ENTRYPOINT" />
     <access origin="*" />
@@ -54,6 +54,26 @@
         <resource-file src="res/icon/android/notification/icon.png" target="app/src/main/res/mipmap-hdpi/notif_icon.png" />
     </platform>
     <platform name="ios">
+        <privacy-manifest>
+            <key>NSPrivacyTracking</key>
+            <false/>
+            <key>NSPrivacyCollectedDataTypes</key>
+            <array/>
+            <key>NSPrivacyAccessedAPITypes</key>
+            <array>
+                <dict>
+                    <key>NSPrivacyAccessedAPIType</key>
+                    <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+                    <key>NSPrivacyAccessedAPITypeReasons</key>
+                    <array>
+                        <string>CA92.1</string>
+                    </array>
+                </dict>
+            </array>
+            <key>NSPrivacyTrackingDomains</key>
+            <array/>
+        </privacy-manifest>
+
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
 
@@ -93,7 +113,7 @@
 
     <preference name="AndroidXEnabled" value="true" />
     <preference name="AndroidLaunchMode" value="singleTask"/>
-    <preference name="AppendUserAgent" value="MTLSolar/$PACKAGE_VERSION" />
+    <preference name="AppendUserAgent" value="MonteliberoWallet/$PACKAGE_VERSION" />
     <preference name="AutoHideSplashScreen" value="$AUTO_HIDE" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="HideKeyboardFormAccessoryBar" value="false" />

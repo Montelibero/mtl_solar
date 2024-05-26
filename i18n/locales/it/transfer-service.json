@@ -58,14 +58,14 @@
         "headline": "Finanzia il tuo account",
         "info": {
           "1": "Acquista Stellar lumen (XLM) o deposita risorse per finanziare il tuo account. Invia EURO dal tuo conto bancario, ETH dal tuo portafoglio Ethereum, ecc",
-          "2": "Solar agisce solo come cliente del servizio offerto dall'emittente della risorsa."
+          "2": "Montelibero Wallet agisce solo come cliente del servizio offerto dall'emittente della risorsa."
         }
       },
       "withdrawal": {
         "headline": "Cosa ritirare",
         "info": {
           "1": "Preleva risorse dal tuo account, come EURO sul tuo conto bancario o ETH sul tuo portafoglio Ethereum.",
-          "2": "Solar agisce solo come cliente del servizio offerto dall'emittente della risorsa."
+          "2": "Montelibero Wallet agisce solo come cliente del servizio offerto dall'emittente della risorsa."
         }
       }
     }

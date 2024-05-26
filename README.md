@@ -1,4 +1,4 @@
-<h1 align="center">MTL Solar Wallet</h1>
+<h1 align="center">Montelibero Wallet</h1>
 
 <p align="center">
   <a href="https://github.com/Montelibero/mtl_solar/releases/latest">
@@ -49,13 +49,13 @@ Open a terminal, navigate to the download folder and make the .AppImage an execu
 the following command:
 
 ```
-$ chmod a+x Montelibero-Solar-Wallet.*.AppImage
+$ chmod a+x Montelibero-Wallet.*.AppImage
 ```
 
 Then you can simply run the program:
 
 ```
-$ ./Montelibero-Solar-Wallet.*.AppImage
+$ ./Montelibero-Wallet.*.AppImage
 ```
 
 ### Mac
@@ -122,7 +122,7 @@ npm run build:linux
 
 #### Building windows binaries on macOS
 
-Starting with macOS Catalina 32-bit executables are not supported. This means that the windows binaries cannot be build natively. One can circumvent this issue by using docker for building the windows binaries. Details are documented [here](https://www.electron.build/multi-platform-build#build-electron-app-using-docker-on-a-local-machine). Since Solar is using Squirrel.Windows the `electronuserland/builder:wine-mono` image should be used.
+Starting with macOS Catalina 32-bit executables are not supported. This means that the windows binaries cannot be build natively. One can circumvent this issue by using docker for building the windows binaries. Details are documented [here](https://www.electron.build/multi-platform-build#build-electron-app-using-docker-on-a-local-machine). Since Montelibero Wallet is using Squirrel.Windows the `electronuserland/builder:wine-mono` image should be used.
 
 To run the docker container use:
 
@@ -143,7 +143,7 @@ docker run --rm -ti \
 
 ### Signed binaries
 
-To sign the binaries, make sure you have the code signing certificates on your local filesystem as a `.p12` file and have the password for them. Make sure not to save the certificates in the Solar directory in order to not accidentally bundling them into the app installer!
+To sign the binaries, make sure you have the code signing certificates on your local filesystem as a `.p12` file and have the password for them. Make sure not to save the certificates in the Montelibero Wallet directory in order to not accidentally bundling them into the app installer!
 
 You can create a `signing-mac.env` and a `signing-win.env` file, pointing `electron-builder` to the right certificate to use for each target platform:
 

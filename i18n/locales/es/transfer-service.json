@@ -58,14 +58,14 @@
         "headline": "Agregar fondos a tu cuenta",
         "info": {
           "1": "Compra Lúmenes Stellar (XLM) o deposita recursos en tu cuenta. Envía dinero desde tu cuenta bancaria, ETH de tu monedero Ethereum, etc.",
-          "2": "Solar actúa como un cliente para el servicio ofrecido exclusivamente por el emisor del activo."
+          "2": "Montelibero Wallet actúa como un cliente para el servicio ofrecido exclusivamente por el emisor del activo."
         }
       },
       "withdrawal": {
         "headline": "Qué retirar?",
         "info": {
           "1": "Retirar activos de tu cuenta, como USD a tu banco o ETH a tu monedero Ethereum.",
-          "2": "Solar actúa como un cliente para el servicio ofrecido exclusivamente por el emisor del activo."
+          "2": "Montelibero Wallet actúa como un cliente para el servicio ofrecido exclusivamente por el emisor del activo."
         }
       }
     }

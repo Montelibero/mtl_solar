@@ -53,7 +53,7 @@
         "error": "Habilitar en ajustes del dispositivo",
         "granted": {
           "title": "Notificaciones habilitadas",
-          "text": "A partir de ahora Solar mostrará notificaciones"
+          "text": "A partir de ahora Montelibero Wallet mostrará notificaciones"
         },
         "message": "Habilitar notificaciones"
       }
@@ -63,13 +63,13 @@
     "action": {
       "confirm": "Confirmar"
     },
-    "header": "Bienvenido a Solar",
+    "header": "Bienvenido a Montelibero Wallet",
     "checkbox": {
       "1": {
-        "label": "Comprendo que soy responsable por la seguridad de mis fondos y que Solar no puede recuperar mis fondos en caso de pérdida de datos o si pierdo mis credenciales."
+        "label": "Comprendo que soy responsable por la seguridad de mis fondos y que Montelibero Wallet no puede recuperar mis fondos en caso de pérdida de datos o si pierdo mis credenciales."
       },
       "2": {
-        "label": "He leído, comprendo y estoy de acuerdo con los <1>Términos y Condiciones</1> <2>y la</2> <3>Política de Privacidad</3> de Solar."
+        "label": "He leído, comprendo y estoy de acuerdo con los <1>Términos y Condiciones</1> <2>y la</2> <3>Política de Privacidad</3> de Montelibero Wallet."
       }
     }
   }

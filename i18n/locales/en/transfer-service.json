@@ -58,14 +58,14 @@
         "headline": "Fund your account",
         "info": {
           "1": "Purchase Stellar lumens (XLM) or deposit assets to fund your account. Send USD from your bank account, ETH from your Ethereum wallet, etc.",
-          "2": "Solar acts as a client to the service offered by the asset issuer only."
+          "2": "Montelibero Wallet acts as a client to the service offered by the asset issuer only."
         }
       },
       "withdrawal": {
         "headline": "What to withdraw",
         "info": {
           "1": "Withdraw assets in your account, like USD to your bank account or ETH to your Ethereum wallet.",
-          "2": "Solar acts as a client to the service offered by the asset issuer only."
+          "2": "Montelibero Wallet acts as a client to the service offered by the asset issuer only."
         }
       }
     }

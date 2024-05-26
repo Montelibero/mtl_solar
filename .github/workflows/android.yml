@@ -61,13 +61,13 @@ jobs:
         - name: Upload .apk artifact
           uses: actions/upload-artifact@v4
           with:
-            name: MTL_Solar_android.apk
+            name: Montelibero_Wallet_android.apk
             path: ${{ github.workspace }}/cordova/platforms/android/app/build/outputs/apk/release/app-release.apk
             compression-level: 0
 
         - name: Upload .aab artifact
           uses: actions/upload-artifact@v4
           with:
-            name: MTL_Solar_android.aab
+            name: Montelibero_Wallet_android.aab
             path: ${{ github.workspace }}/cordova/platforms/android/app/build/outputs/bundle/release/app-release.aab
             compression-level: 0

@@ -26,8 +26,8 @@ async function initTransferServer(domain: string, testnet: boolean): Promise<Tra
   try {
     const transferServer = await withTimeout(
       openTransferServer(domain, network, {
-        walletName: "Solar",
-        walletURL: "https://solarwallet.io"
+        walletName: "Montelibero Wallet",
+        walletURL: "http://solar.montelibero.org"
       }),
       8000,
       `Transfer server discovery at ${domain} timed out.`

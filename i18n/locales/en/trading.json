@@ -5,7 +5,7 @@
   },
   "action-selection": {
     "buy": {
-      "description": "Buy some amount of an asset on the distributed exchange",
+      "description": "Buy some amount of an asset on the Stellar blockchain",
       "label": "Buy asset"
     },
     "sell": {
