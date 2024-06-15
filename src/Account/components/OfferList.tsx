@@ -217,9 +217,9 @@ function OfferList(props: Props & { sendTransaction: (tx: Transaction) => Promis
   const accountData = useLiveAccountData(props.account.accountID, props.account.testnet)
   const classes = useStyles()
   const horizon = useHorizon(props.account.testnet)
-  const offerHistory = useLiveAccountOffers(props.account.publicKey, props.account.testnet)
+  const offerHistory = useLiveAccountOffers(props.account.accountID, props.account.testnet)
   const [moreTxsLoadingState, handleMoreTxsFetch] = useLoadingState()
-  const fetchMoreOffers = useOlderOffers(props.account.publicKey, props.account.testnet)
+  const fetchMoreOffers = useOlderOffers(props.account.accountID, props.account.testnet)
 
   const [expanded, setExpanded] = React.useState(true)
 
