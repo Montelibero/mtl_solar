@@ -80,7 +80,7 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
   const form = useForm<PaymentFormValues>({
     defaultValues: {
       amount: "",
-      asset: Asset.native(),
+      asset: undefined,
       destination: "",
       memoValue: ""
     }
@@ -216,6 +216,9 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
         inputRef={form.register({
           required: t<string>("payment.validation.no-price"),
           validate: value => {
+            if (!form.getValues()["asset"]) {
+              return t<string>("payment.validation.asset-missing")
+            }
             if (!isValidAmount(value) || FormBigNumber(value).eq(0)) {
               return t<string>("payment.validation.invalid-price")
             } else if (FormBigNumber(value).gt(spendableBalance)) {

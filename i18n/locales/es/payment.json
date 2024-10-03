@@ -35,6 +35,7 @@
     "not-enough-funds": "Fondos insuficientes.",
     "invalid-destination": "Se esperaba una llave pública o una dirección Stellar.",
     "invalid-price": "Monto no válido.",
-    "integer-memo-required": "El Memo debe ser un número entero"
+    "integer-memo-required": "El Memo debe ser un número entero",
+    "asset-missing": "Ningún activo seleccionado."
   }
 }

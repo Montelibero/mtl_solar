@@ -122,7 +122,8 @@ export function getAssetsFromBalances(balances: BalanceLine[]) {
   )
 }
 
-export function findMatchingBalanceLine(balances: AccountData["balances"], asset: Asset): BalanceLine | undefined {
+export function findMatchingBalanceLine(balances: AccountData["balances"], asset?: Asset): BalanceLine | undefined {
+  if (!asset) return undefined
   return balances.find((balance): balance is BalanceLine => balancelineToAsset(balance).equals(asset))
 }
 

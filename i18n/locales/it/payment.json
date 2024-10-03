@@ -35,6 +35,7 @@
     "not-enough-funds": "Fondi insufficienti.",
     "invalid-destination": "Attesa una chiave pubblica o un indirizzo stellare.",
     "invalid-price": "Importo non valido.",
-    "integer-memo-required": "Il memo deve essere un numero intero."
+    "integer-memo-required": "Il memo deve essere un numero intero.",
+    "asset-missing": "Nessuna risorsa selezionata."
   }
 }

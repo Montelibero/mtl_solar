@@ -38,6 +38,7 @@
     "not-enough-funds": "Недостаточно средств.",
     "invalid-destination": "Ожидается публичный ключ или stellar адрес.",
     "invalid-price": "Неверная сумма.",
-    "integer-memo-required": "Заметка должна быть числом."
+    "integer-memo-required": "Заметка должна быть числом.",
+    "asset-missing": "Не выбран актив."
   }
 }
