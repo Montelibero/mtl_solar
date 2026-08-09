@@ -1,0 +1,2 @@
+import{a as i}from"./stellar-sdk-DPLH474J.js";import{bK as v,bM as p,bJ as f}from"./app-B-S95GhN.js";var e={},a;function l(){if(a)return e;a=1;var r=v();Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0;var t=r(p()),o=r(f()),u=(0,o.default)(t.default.createElement("path",{d:"M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"}),"SwapHoriz");return e.default=u,e}var n=l();const s=i(n);export{s as S};
+//# sourceMappingURL=SwapHoriz-BE0836Y5.js.map
