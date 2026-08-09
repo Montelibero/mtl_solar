@@ -34,6 +34,7 @@ declare namespace Platform {
     showAllBalancesOnAccountCards: boolean
     savedAddressesSyncEnabled?: boolean
     savedAddressesSyncApiKey?: string
+    lastOpenedAccountID?: string
   }
 }
 

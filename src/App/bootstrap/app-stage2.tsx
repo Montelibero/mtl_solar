@@ -12,6 +12,7 @@ import WalletConnectHandler from "~WalletConnect/components/WalletConnectHandler
 import AllAccountsPage from "../components/AccountListView"
 import AndroidBackButton from "../components/AndroidBackButton"
 import DesktopNotifications from "../components/DesktopNotifications"
+import LastOpenedAccountManager from "../components/LastOpenedAccountManager"
 import LinkHandler from "../components/LinkHandler"
 
 const CreateMainnetAccount = () => (
@@ -32,6 +33,7 @@ function Stage2() {
   }, [])
   return (
     <>
+      <LastOpenedAccountManager />
       <VerticalLayout height="100%" style={{ WebkitOverflowScrolling: "touch" }}>
         <VerticalLayout height="100%" grow overflowY="hidden">
           <MainErrorBoundary>

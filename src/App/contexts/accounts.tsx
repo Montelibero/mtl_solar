@@ -29,6 +29,7 @@ interface NewAccountData {
 
 interface ContextValue {
   accounts: Account[]
+  initialized: boolean
   networkSwitch: NetworkID
   changePassword(accountID: string, prevPassword: string, nextPassword: string): Promise<any>
   createAccount(accountData: NewAccountData): Promise<Account>
@@ -136,6 +137,7 @@ const initialAccounts: Account[] = []
 
 const AccountsContext = React.createContext<ContextValue>({
   accounts: initialAccounts,
+  initialized: false,
   networkSwitch: "mainnet",
   changePassword: () => Promise.reject(new Error("AccountsProvider not yet ready.")),
   createAccount: () => {
@@ -153,6 +155,7 @@ interface Props {
 
 export function AccountsProvider(props: Props) {
   const [accounts, setAccounts] = React.useState<Account[]>(initialAccounts)
+  const [initialized, setInitialized] = React.useState(false)
   const [networkSwitch, setNetworkSwitch] = React.useState<NetworkID>("mainnet")
 
   React.useEffect(() => {
@@ -167,8 +170,10 @@ export function AccountsProvider(props: Props) {
           setNetworkSwitch(getInitialNetwork(loadedAccounts))
         })
         .catch(trackError)
+        .then(() => setInitialized(true))
     } catch (error) {
       trackError(error)
+      setInitialized(true)
     }
 
     const unsubscribe = () => undefined
@@ -246,6 +251,7 @@ export function AccountsProvider(props: Props) {
 
   const contextValue: ContextValue = {
     accounts,
+    initialized,
     networkSwitch,
     changePassword,
     createAccount,
