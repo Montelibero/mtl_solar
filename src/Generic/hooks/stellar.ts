@@ -1,7 +1,7 @@
 /* tslint:disable:no-string-literal */
 
 import React from "react"
-import { Asset, Networks, Transaction, Horizon } from "@stellar/stellar-sdk"
+import { Asset, MemoType, Networks, Transaction, Horizon } from "@stellar/stellar-sdk"
 import {
   SigningKeyCacheContext,
   StellarAddressCacheContext,
@@ -13,6 +13,7 @@ import { workers } from "~Workers/worker-controller"
 import { StellarToml, StellarTomlCurrency } from "~shared/types/stellar-toml"
 import { createEmptyAccountData, AccountData, BalanceLine } from "../lib/account"
 import { createPersistentCache } from "../lib/persistent-cache"
+import { ResolvedDestination } from "../lib/destination-resolver"
 import * as StellarAddresses from "../lib/stellar-address"
 import { mapSuspendables } from "../lib/suspense"
 import { accountDataCache, accountHomeDomainCache, stellarTomlCache } from "./_caches"
@@ -50,6 +51,39 @@ export function useFederationLookup() {
   }
 }
 
+export function useDestinationResolver() {
+  const { lookupFederationRecord } = useFederationLookup()
+
+  const isValidDestination = React.useCallback(
+    (value: string) =>
+      StellarAddresses.isPublicKey(value) || StellarAddresses.isMuxedAddress(value) || StellarAddresses.isStellarAddress(value),
+    []
+  )
+
+  const needsResolution = React.useCallback((value: string) => StellarAddresses.isStellarAddress(value), [])
+
+  const resolveDestination = React.useCallback(
+    async (value: string): Promise<ResolvedDestination> => {
+      const federationRecord = await lookupFederationRecord(value)
+      const destination = federationRecord.account_id
+
+      if (!StellarAddresses.isPublicKey(destination)) {
+        throw Error("Resolved destination is invalid.")
+      }
+
+      return {
+        destination,
+        requiredMemo:
+          federationRecord.memo && federationRecord.memo_type
+            ? { type: federationRecord.memo_type as MemoType, value: federationRecord.memo }
+            : undefined
+      }
+    },
+    [lookupFederationRecord]
+  )
+
+  return { isValidDestination, needsResolution, resolveDestination }
+}
 export function useWebAuth() {
   const signingKeys = React.useContext(SigningKeyCacheContext)
   const webauthTokens = React.useContext(WebAuthTokenCacheContext)
