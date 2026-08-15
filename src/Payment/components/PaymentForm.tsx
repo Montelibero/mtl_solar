@@ -11,7 +11,7 @@ import { nanoid } from "nanoid"
 import React from "react"
 import { Controller, useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { Asset, Federation, Memo, MemoType, Horizon, Transaction } from "@stellar/stellar-sdk"
+import { Asset, Memo, MemoType, Horizon, Transaction } from "@stellar/stellar-sdk"
 import { Account } from "~App/contexts/accounts"
 import { DialogsContext } from "~App/contexts/dialogs"
 import { useSavedAddressesSyncOnMount } from "~App/contexts/savedAddresses"
@@ -21,7 +21,7 @@ import { ActionButton, DialogActionsBox } from "~Generic/components/DialogAction
 import { PriceInput, QRReader } from "~Generic/components/FormFields"
 import Portal from "~Generic/components/Portal"
 import { PublicKey } from "~Generic/components/PublicKey"
-import { useFederationLookup } from "~Generic/hooks/stellar"
+import { useRecipientResolver } from "~Generic/hooks/stellar"
 import { AccountRecord, useWellKnownAccounts } from "~Generic/hooks/stellar-ecosystem"
 import { RefStateObject, useIsMobile } from "~Generic/hooks/userinterface"
 import { AccountData } from "~Generic/lib/account"
@@ -30,7 +30,8 @@ import { CustomError } from "~Generic/lib/errors"
 import { FormBigNumber, isValidAmount, replaceCommaWithDot } from "~Generic/lib/form"
 import { MultisigTransactionResponse, MultisigTransactionStatus } from "~Generic/lib/multisig-service"
 import { findMatchingBalanceLine, getAccountMinimumBalance, getSpendableBalance } from "~Generic/lib/stellar"
-import { isMuxedAddress, isPublicKey, isStellarAddress } from "~Generic/lib/stellar-address"
+import { isMuxedAddress, isPublicKey } from "~Generic/lib/stellar-address"
+import { ResolvedRecipient } from "~Generic/lib/recipient"
 import { createPaymentOperation, createTransaction, multisigMinimumFee } from "~Generic/lib/transaction"
 import { HorizontalLayout } from "~Layout/components/Box"
 
@@ -50,17 +51,13 @@ export interface PaymentFormValues {
   memoValue: string
 }
 
-// Form values enriched with a resolved destination and optional SEP-02 record for transaction creation.
 type ExtendedPaymentFormValues = PaymentFormValues & {
-  federationRecord?: Federation.Api.Record
   memoType: MemoType
-  resolvedDestination?: string
+  recipient: ResolvedRecipient
 }
 
-// UI state for the latest asynchronous DeName or SEP-02 destination lookup.
 interface DestinationResolution {
-  destination: string
-  federationRecord?: Federation.Api.Record
+  recipient: ResolvedRecipient
   value: string
 }
 
@@ -103,14 +100,13 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
   const { t } = useTranslation()
   const wellknownAccounts = useWellKnownAccounts(props.testnet)
   useSavedAddressesSyncOnMount()
-  const { lookupFederationRecord } = useFederationLookup()
+  const { isRecipient, resolveRecipient } = useRecipientResolver(props.testnet)
 
   const [matchingWellknownAccount, setMatchingWellknownAccount] = React.useState<AccountRecord | undefined>(undefined)
-  const [destinationResolution, setDestinationResolution] = React.useState<DestinationResolution | undefined>(undefined)
+  const [destinationResolution, setDestinationResolution] = React.useState<DestinationResolution | undefined>(
+    undefined
+  )
   const [isDestinationResolutionPending, setIsDestinationResolutionPending] = React.useState(false)
-  const destinationRequestRef = React.useRef(0)
-  const destinationDebounceRef = React.useRef<number | undefined>(undefined)
-  const preselectedDestinationResolvedRef = React.useRef<string | undefined>(undefined)
   const [memoType, setMemoType] = React.useState<MemoType>("none")
   const [memoMetadata, setMemoMetadata] = React.useState<MemoMetadata>({
     label: t("payment.memo-metadata.label.default"),
@@ -128,87 +124,67 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
 
   const formValues = form.watch()
   const { preselectedParams } = props
-  const { setValue } = form
+  const { clearError, setError, setValue } = form
+  const isDirectAddress = isPublicKey(formValues.destination) || isMuxedAddress(formValues.destination)
+  const updateDestination = React.useCallback(
+    (destination: string) => {
+      setValue("destination", destination)
 
-  const resolveDestination = React.useCallback(
-    async (value: string) => {
-      destinationRequestRef.current += 1
-      const requestID = destinationRequestRef.current
-      if (destinationDebounceRef.current) {
-        window.clearTimeout(destinationDebounceRef.current)
-      }
-
-      const validDirectAddress = isPublicKey(value) || isMuxedAddress(value)
-      const needsResolution = isStellarAddress(value)
-      setDestinationResolution(undefined)
-
-      if (!validDirectAddress && !needsResolution) {
-        setIsDestinationResolutionPending(false)
-        form.setError(
+      if (!isRecipient(destination)) {
+        setError(
           "destination",
           "validate",
-          t<string>(value.length === 0 ? "payment.validation.no-destination" : "payment.validation.invalid-destination")
+          t<string>(
+            destination.length === 0 ? "payment.validation.no-destination" : "payment.validation.invalid-destination"
+          )
         )
         return
       }
 
-      form.clearError("destination")
-      if (!needsResolution) {
-        setIsDestinationResolutionPending(false)
-        return
-      }
+      clearError("destination")
+    },
+    [clearError, isRecipient, setError, setValue, t]
+  )
+  const resolvedRecipient = React.useMemo(
+    () =>
+      isDirectAddress
+        ? { address: formValues.destination }
+        : destinationResolution?.value === formValues.destination
+          ? destinationResolution.recipient
+          : undefined,
+    [destinationResolution, formValues.destination, isDirectAddress]
+  )
 
-      setIsDestinationResolutionPending(true)
-      destinationDebounceRef.current = window.setTimeout(async () => {
-        try {
-          const federationRecord = await lookupFederationRecord(value)
-          const destination = federationRecord?.account_id
+  React.useEffect(() => {
+    const destination = formValues.destination
+    let active = true
 
-          if (!isPublicKey(destination)) {
-            throw Error("Resolved destination is invalid.")
-          }
-          if (requestID !== destinationRequestRef.current) return
+    setDestinationResolution(undefined)
+    setIsDestinationResolutionPending(!isDirectAddress && isRecipient(destination))
 
-          setDestinationResolution({ destination, federationRecord, value })
-          form.clearError("destination")
-        } catch (error) {
-          if (requestID !== destinationRequestRef.current) return
-          setDestinationResolution(undefined)
-          form.setError("destination", "resolve", t<string>("payment.validation.invalid-destination"))
-        } finally {
-          if (requestID === destinationRequestRef.current) {
-            setIsDestinationResolutionPending(false)
-          }
+    if (!isRecipient(destination)) return
+    clearError("destination")
+    if (isDirectAddress) return
+
+    const timeout = window.setTimeout(async () => {
+      try {
+        const recipient = await resolveRecipient(destination)
+        if (active) {
+          setDestinationResolution({ recipient, value: destination })
+          clearError("destination")
         }
-      }, 350)
-    },
-    [form, lookupFederationRecord, t]
-  )
-
-  const updateDestination = React.useCallback(
-    (value: string) => {
-      setValue("destination", value)
-      void resolveDestination(value)
-    },
-    [resolveDestination, setValue]
-  )
-
-  React.useEffect(() => {
-    return () => {
-      destinationRequestRef.current += 1
-      if (destinationDebounceRef.current) {
-        window.clearTimeout(destinationDebounceRef.current)
+      } catch {
+        if (active) setError("destination", "resolve", t<string>("payment.validation.invalid-destination"))
+      } finally {
+        if (active) setIsDestinationResolutionPending(false)
       }
-    }
-  }, [])
+    }, 350)
 
-  React.useEffect(() => {
-    const destination = preselectedParams?.destination
-    if (destination && preselectedDestinationResolvedRef.current !== destination) {
-      preselectedDestinationResolvedRef.current = destination
-      void resolveDestination(destination)
+    return () => {
+      active = false
+      window.clearTimeout(timeout)
     }
-  }, [preselectedParams, resolveDestination])
+  }, [clearError, formValues.destination, isDirectAddress, isRecipient, resolveRecipient, setError, t])
 
   const spendableBalance = getSpendableBalance(
     getAccountMinimumBalance(props.accountData),
@@ -220,19 +196,20 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
 
     if (preselectedParams.amount) setValue("amount", preselectedParams.amount)
     if (preselectedParams.asset) setValue("asset", preselectedParams.asset)
-    if (preselectedParams.destination) setValue("destination", preselectedParams.destination)
+    if (preselectedParams.destination) updateDestination(preselectedParams.destination)
     if (preselectedParams.memo) setValue("memoValue", preselectedParams.memo)
-  }, [preselectedParams, setValue])
+  }, [preselectedParams, setValue, updateDestination])
 
   React.useEffect(() => {
-    if (!isPublicKey(formValues.destination) && !isStellarAddress(formValues.destination)) {
+    const destination = resolvedRecipient?.address || formValues.destination
+    if (!isPublicKey(destination) && !isMuxedAddress(destination)) {
       if (matchingWellknownAccount) {
         setMatchingWellknownAccount(undefined)
       }
       return
     }
 
-    const knownAccount = wellknownAccounts.lookup(formValues.destination)
+    const knownAccount = wellknownAccounts.lookup(destination)
     setMatchingWellknownAccount(knownAccount)
 
     if (preselectedParams && preselectedParams.memo && preselectedParams.memoType) {
@@ -245,7 +222,7 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
         placeholder: t("payment.memo-metadata.placeholder.mandatory"),
         requiredType: preselectedParams.memoType
       })
-    } else if (knownAccount && knownAccount.tags.indexOf("exchange") !== -1) {
+    } else if (knownAccount && knownAccount.tags.indexOf("exchange") !== -1 && !resolvedRecipient?.memo) {
       const acceptedMemoType = knownAccount.accepts && knownAccount.accepts.memo
       const requiredType = acceptedMemoType === "MEMO_ID" ? "id" : "text"
       setMemoType(requiredType)
@@ -269,16 +246,14 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
     matchingWellknownAccount,
     memoType,
     preselectedParams,
+    resolvedRecipient,
     t,
     wellknownAccounts
   ])
 
   const handleFormSubmission = () => {
     const values = form.getValues()
-    const needsResolution = isStellarAddress(values.destination)
-    const resolution = destinationResolution?.value === values.destination ? destinationResolution : undefined
-
-    if (needsResolution && !resolution) {
+    if (!resolvedRecipient) {
       form.setError("destination", "resolve", t<string>("payment.validation.invalid-destination"))
       return
     }
@@ -287,8 +262,7 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
       {
         memoType,
         ...values,
-        federationRecord: resolution?.federationRecord,
-        resolvedDestination: resolution?.destination
+        recipient: resolvedRecipient
       },
       spendableBalance,
       matchingWellknownAccount
@@ -327,7 +301,7 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
       const [destination, query] = scanResult.split("?")
 
       // handle plain address or Kraken-style uri (<destination>?dt=<memoid>)
-      if (isPublicKey(destination) || isMuxedAddress(destination) || isStellarAddress(destination)) {
+      if (isRecipient(destination)) {
         updateDestination(destination)
 
         if (!query) {
@@ -343,7 +317,7 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
         }
       }
     },
-    [form, setValue, updateDestination]
+    [form, handlePaymentLink, isRecipient, setValue, updateDestination]
   )
 
   const { openSavedAddresses } = React.useContext(DialogsContext)
@@ -353,14 +327,14 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
       updateDestination(address)
       openSavedAddresses(null)
     },
-    [form, updateDestination]
+    [openSavedAddresses, updateDestination]
   )
 
   const handleContractListClick = React.useCallback(() => {
     openSavedAddresses({
       onSelect: handleOnSavedAddressClick
     })
-  }, [])
+  }, [handleOnSavedAddressClick, openSavedAddresses])
 
   const qrReaderAdornment = React.useMemo(
     () => (
@@ -396,18 +370,15 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
         inputRef={form.register({
           required: t<string>("payment.validation.no-destination"),
           validate: (value) =>
-            isPublicKey(value) ||
-            isMuxedAddress(value) ||
-            isStellarAddress(value) ||
-            t<string>("payment.validation.invalid-destination")
+            isRecipient(value) || t<string>("payment.validation.invalid-destination")
         })}
         helperText={
           form.errors.destination
             ? "\u00a0"
             : isDestinationResolutionPending
               ? t("generic.status.fetching-address")
-              : destinationResolution?.value === formValues.destination
-                ? <PublicKey publicKey={destinationResolution.destination} showRaw style={{ lineHeight: "inherit" }} testnet={props.testnet} variant="shorter" />
+            : resolvedRecipient
+                ? <PublicKey publicKey={resolvedRecipient.address} showRaw style={{ lineHeight: "inherit" }} testnet={props.testnet} variant="shorter" />
                 : "\u00a0"
         }
         label={form.errors.destination ? form.errors.destination.message : t("payment.inputs.destination.label")}
@@ -418,14 +389,16 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
       />
     ),
     [
-      destinationResolution,
       form,
       focused,
-      formValues.destination,
       isDestinationResolutionPending,
+      isRecipient,
       preselectedParams,
+      props.canChangePreselectedParams,
       qrReaderAdornment,
+      resolvedRecipient,
       t,
+      props.testnet,
       updateDestination
     ]
   )
@@ -450,7 +423,16 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
         name="asset"
       />
     ),
-    [form, focused, formValues.asset, preselectedParams, props.accountData.balances, props.testnet]
+    [
+      form,
+      focused,
+      formValues.asset,
+      preselectedParams,
+      props.accountData.account_id,
+      props.accountData.balances,
+      props.canChangePreselectedParams,
+      props.testnet
+    ]
   )
 
   const maxSendButton = React.useMemo(
@@ -476,7 +458,7 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
   const priceInputHelperText = React.useMemo(() => {
     if (!form.getValues()["asset"] || isOwnAsset) return <span></span>
     return maxSendButton
-  }, [form, isOwnAsset])
+  }, [form, isOwnAsset, maxSendButton])
 
   const priceInput = React.useMemo(
     () => (
@@ -514,7 +496,18 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
         }}
       />
     ),
-    [assetSelector, focused, form, isSmallScreen, preselectedParams, spendableBalance, t]
+    [
+      assetSelector,
+      focused,
+      form,
+      isOwnAsset,
+      isSmallScreen,
+      preselectedParams,
+      priceInputHelperText,
+      props.canChangePreselectedParams,
+      spendableBalance,
+      t
+    ]
   )
 
   const memoInput = React.useMemo(
@@ -571,6 +564,8 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
       memoMetadata.placeholder,
       memoMetadata.requiredType,
       preselectedParams,
+      focused,
+      props.canChangePreselectedParams,
       setValue,
       t
     ]
@@ -587,6 +582,7 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
         <ActionButton
           form={formID}
           icon={<SendIcon style={{ fontSize: 16 }} />}
+          disabled={isDestinationResolutionPending}
           loading={props.txCreationPending}
           onClick={() => undefined}
           type="submit"
@@ -595,7 +591,7 @@ const PaymentForm = React.memo(function PaymentForm(props: PaymentFormProps) {
         </ActionButton>
       </DialogActionsBox>
     ),
-    [formID, isOwnAsset, props.onCancel, props.txCreationPending, t]
+    [formID, isDestinationResolutionPending, props.onCancel, props.txCreationPending, t]
   )
 
   return (
@@ -640,19 +636,15 @@ interface Props {
 function PaymentFormContainer(props: Props) {
   const createPaymentTx = async (horizon: Horizon.Server, account: Account, formValues: ExtendedPaymentFormValues) => {
     const asset = props.trustedAssets.find((trustedAsset) => trustedAsset.equals(formValues.asset))
-    const federationRecord = formValues.federationRecord || null
-    const destination = formValues.resolvedDestination || formValues.destination
-
     const userMemo = createMemo(formValues.memoType, formValues.memoValue)
-    const federationMemo =
-      federationRecord && federationRecord.memo && federationRecord.memo_type
-        ? new Memo(federationRecord.memo_type as MemoType, federationRecord.memo)
-        : Memo.none()
+    const recipientMemo = formValues.recipient.memo
+      ? new Memo(formValues.recipient.memo.type, formValues.recipient.memo.value)
+      : Memo.none()
 
-    if (userMemo.type !== "none" && federationMemo.type !== "none") {
+    if (userMemo.type !== "none" && recipientMemo.type !== "none") {
       throw CustomError(
         "MemoAlreadySpecifiedError",
-        `Cannot set a custom memo. Federation record of ${formValues.destination} already specifies memo.`,
+        `Cannot set a custom memo. Resolved recipient of ${formValues.destination} already specifies memo.`,
         { destination: formValues.destination }
       )
     }
@@ -662,12 +654,12 @@ function PaymentFormContainer(props: Props) {
     const payment = await createPaymentOperation({
       asset: asset || Asset.native(),
       amount: replaceCommaWithDot(formValues.amount),
-      destination,
+      destination: formValues.recipient.address,
       horizon
     })
     return createTransaction([payment], {
       accountData: props.accountData,
-      memo: federationMemo.type !== "none" ? federationMemo : userMemo,
+      memo: recipientMemo.type !== "none" ? recipientMemo : userMemo,
       minTransactionFee: isMultisigTx ? multisigMinimumFee : 0,
       horizon,
       walletAccount: account

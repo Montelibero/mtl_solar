@@ -13,6 +13,7 @@ import { workers } from "~Workers/worker-controller"
 import { StellarToml, StellarTomlCurrency } from "~shared/types/stellar-toml"
 import { createEmptyAccountData, AccountData, BalanceLine } from "../lib/account"
 import { createPersistentCache } from "../lib/persistent-cache"
+import { isRecipient, RecipientResolver, resolveRecipient } from "../lib/recipient"
 import * as StellarAddresses from "../lib/stellar-address"
 import { mapSuspendables } from "../lib/suspense"
 import { accountDataCache, accountHomeDomainCache, stellarTomlCache } from "./_caches"
@@ -37,17 +38,46 @@ export function useHorizonURLs(testnet: boolean = false) {
   return horizonURLs
 }
 
-export function useFederationLookup() {
+export function useFederationLookup(testnet?: boolean) {
   const lookup = React.useContext(StellarAddressCacheContext)
   const reverseLookup = React.useContext(StellarAddressReverseCacheContext)
-  return {
+  return React.useMemo(() => ({
     lookupFederationRecord(stellarAddress: string) {
-      return StellarAddresses.lookupFederationRecord(stellarAddress, lookup.cache, reverseLookup.cache)
+      const network = testnet ? "testnet" : "mainnet"
+      return StellarAddresses.lookupFederationRecord(
+        stellarAddress,
+        lookup.cache,
+        reverseLookup.cache,
+        `federation:${network}:${stellarAddress}`
+      )
     },
     lookupStellarAddress(publicKey: string) {
       return reverseLookup.cache.get(publicKey)
     }
+  }), [lookup.cache, reverseLookup.cache, testnet])
+}
+
+const directRecipientResolver: RecipientResolver = {
+  matches: value => StellarAddresses.isPublicKey(value) || StellarAddresses.isMuxedAddress(value),
+  async resolve(value) {
+    return { address: value }
   }
+}
+
+export function useRecipientResolver(testnet: boolean) {
+  const { lookupFederationRecord } = useFederationLookup(testnet)
+  const resolvers = React.useMemo(
+    () => [directRecipientResolver, StellarAddresses.federationRecipientResolver(lookupFederationRecord)],
+    [lookupFederationRecord]
+  )
+
+  return React.useMemo(
+    () => ({
+      isRecipient: (value: string) => isRecipient(value, resolvers),
+      resolveRecipient: (value: string) => resolveRecipient(value, resolvers)
+    }),
+    [resolvers]
+  )
 }
 
 export function useWebAuth() {
