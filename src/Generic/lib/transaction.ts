@@ -118,7 +118,7 @@ export async function createTransaction(operations: xdr.Operation<any>[], option
   const timeout = selectTransactionTimeout(options.accountData)
 
   const [accountMetadata, timebounds] = await Promise.all([
-    applyTimeout(netWorker.fetchAccountData(horizonURL, walletAccount.accountID, 10), 10000, () =>
+    applyTimeout(netWorker.fetchAccountData(horizonURL, walletAccount.accountID, 10, true), 10000, () =>
       fail(`Fetching source account data timed out`)
     ),
     applyTimeout(netWorker.fetchTimebounds(horizonURL, timeout), 10000, () =>
@@ -229,7 +229,7 @@ export async function requiresRemoteSignatures(horizon: Server, transaction: Tra
 
   const accounts = await Promise.all(
     sources.map(async sourcePublicKey => {
-      const account = await netWorker.fetchAccountData(horizonURL, sourcePublicKey)
+      const account = await netWorker.fetchAccountData(horizonURL, sourcePublicKey, undefined, true)
       if (!account) {
         throw Error(`Could not fetch account metadata from horizon server: ${sourcePublicKey}`)
       }

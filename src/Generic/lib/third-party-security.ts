@@ -38,7 +38,7 @@ export async function isThirdPartyProtected(horizon: Horizon.Server, accountPubK
   const { netWorker } = await workers
   const horizonURL = horizon.serverURL.toString()
 
-  const account = await netWorker.fetchAccountData(horizonURL, accountPubKey)
+  const account = await netWorker.fetchAccountData(horizonURL, accountPubKey, undefined, true)
   const signerKeys = (account?.signers || []).map(signer => signer.key)
 
   const enabledService = services.find(service => signerKeys.includes(service.publicKey))

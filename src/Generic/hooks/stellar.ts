@@ -186,7 +186,7 @@ export function useAccountHomeDomains(
   const forceRerender = () => setRerenderCounter(counter => counter + 1)
 
   const fetchHomeDomain = async (accountID: string): Promise<[string] | []> => {
-    const accountData = await netWorker.fetchAccountData(horizonURLs, accountID)
+    const accountData = await netWorker.fetchAccountData(horizonURLs, accountID, undefined, true)
     const homeDomain = accountData ? (accountData as any).home_domain : undefined
     if (homeDomain) {
       ;(testnet ? homeDomainCacheTestnet : homeDomainCachePubnet).save(accountID, homeDomain || null)

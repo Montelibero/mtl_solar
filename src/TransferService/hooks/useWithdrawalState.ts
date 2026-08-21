@@ -156,7 +156,7 @@ export function useWithdrawalState(account: Account, closeDialog: () => void) {
     instructions: WithdrawalInstructionsSuccess,
     amount: BigNumber
   ) => {
-    const accountData = await netWorker.fetchAccountData(horizonURLs, account.accountID)
+    const accountData = await netWorker.fetchAccountData(horizonURLs, account.accountID, undefined, true)
     const horizonURL = horizonURLs[0]
 
     if (!accountData) {

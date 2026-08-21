@@ -747,7 +747,8 @@ export interface PaginationOptions {
 export async function fetchAccountData(
   horizonURLs: string | string[],
   accountID: string,
-  priority: number = 2
+  priority: number = 2,
+  skipIssuedAssets = false,
 ): Promise<(Horizon.AccountResponse & { home_domain?: string | undefined }) | null> {
   const horizonURL = Array.isArray(horizonURLs) ? getRandomURL(horizonURLs) : horizonURLs
   const fetchQueue = getFetchQueue(horizonURL)
@@ -760,19 +761,23 @@ export async function fetchAccountData(
 
   const accountData = await parseJSONResponse<Horizon.AccountResponse & { home_domain: string | undefined }>(response)
 
-  const issuedAssets = (await fetchIssuedAssetsData(horizonURL, accountID))._embedded.records.map((a: AssetRecord) => ({
-    balance: "0",
-    limit: "0",
-    asset_type: a.asset_type as any, // TODO: possible to resolve?
-    asset_code: a.asset_code,
-    asset_issuer: a.asset_issuer,
-    buying_liabilities: "0",
-    selling_liabilities: "0",
-    last_modified_ledger: "",
-    is_authorized: true,
-    is_authorized_to_maintain_liabilities: true,
-    is_clawback_enabled: a.flags.auth_clawback_enabled
-  }))
+  let issuedAssets = [] as AssetRecord[]
+
+  if (!skipIssuedAssets) {
+    issuedAssets = (await fetchIssuedAssetsData(horizonURL, accountID))._embedded.records.map((a: AssetRecord) => ({
+      balance: "0",
+      limit: "0",
+      asset_type: a.asset_type as any, // TODO: possible to resolve?
+      asset_code: a.asset_code,
+      asset_issuer: a.asset_issuer,
+      buying_liabilities: "0",
+      selling_liabilities: "0",
+      last_modified_ledger: "",
+      is_authorized: true,
+      is_authorized_to_maintain_liabilities: true,
+      is_clawback_enabled: a.flags.auth_clawback_enabled
+    }))
+  }
   // FIXME: Add support for liquidity pools
   // Remove liquidity pools from account data
   // Add self-issued assets
