@@ -87,6 +87,9 @@
       "scan": "Escanear"
     }
   },
+  "status": {
+    "fetching-address": "Buscando dirección..."
+  },
   "submission-progress": {
     "pending": "Enviando a la red...",
     "success": {

@@ -92,6 +92,9 @@
       "scan": "Скенирај"
     }
   },
+  "status": {
+    "fetching-address": "Тражење адресе..."
+  },
   "submission-progress": {
     "pending": "Шаљем на мрежу...",
     "success": {

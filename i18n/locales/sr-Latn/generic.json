@@ -92,6 +92,9 @@
       "scan": "Skeniraj"
     }
   },
+  "status": {
+    "fetching-address": "Traženje adrese..."
+  },
   "submission-progress": {
     "pending": "Šaljem na mrežu...",
     "success": {

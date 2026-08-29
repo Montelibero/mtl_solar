@@ -80,6 +80,9 @@
       "scan": "Scansiona"
     }
   },
+  "status": {
+    "fetching-address": "Ricerca dell'indirizzo..."
+  },
   "submission-progress": {
     "pending": "Invio alla rete ...",
     "success": {

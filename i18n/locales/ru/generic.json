@@ -92,6 +92,9 @@
       "scan": "Сканировать"
     }
   },
+  "status": {
+    "fetching-address": "Поиск адреса..."
+  },
   "submission-progress": {
     "pending": "Отправка в сеть ...",
     "success": {
