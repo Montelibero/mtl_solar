@@ -1,6 +1,8 @@
 {
   "action": {
     "add-asset": "Додај активу",
+    "delete": "Обриши",
+    "update": "Ажурирај",
     "submit": "Постави налог"
   },
   "action-selection": {

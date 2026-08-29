@@ -1,6 +1,8 @@
 {
   "action": {
     "add-asset": "Dodaj aktivu",
+    "delete": "Obriši",
+    "update": "Ažuriraj",
     "submit": "Postavi nalog"
   },
   "action-selection": {

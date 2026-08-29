@@ -34,7 +34,7 @@
   "manage-buy-offer": {
     "title": {
       "create": "Kreiraj nalog za kupovinu",
-      "delete": "Nalog za kupovinu",
+      "delete": "Obriši nalog za kupovinu",
       "update": "Ažuriraj nalog za kupovinu"
     }
   },
@@ -50,7 +50,7 @@
   "manage-sell-offer": {
     "title": {
       "create": "Kreiraj nalog za prodaju",
-      "delete": "Nalog za prodaju",
+      "delete": "Obriši nalog za prodaju",
       "update": "Ažuriraj nalog za prodaju"
     }
   },

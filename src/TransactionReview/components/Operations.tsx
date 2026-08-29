@@ -460,7 +460,7 @@ function ManageOfferOperation(props: ManageOfferOperationProps) {
           ? t("operations.manage-sell-offer.title.delete")
           : t("operations.manage-sell-offer.title.update")
 
-    return offer ? (
+    return offer && buyAmount.eq(0) ? (
       props.operation.type === "manageBuyOffer" ? (
         <SummaryItem heading={props.hideHeading ? undefined : heading}>
           <SummaryDetailsField

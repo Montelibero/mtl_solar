@@ -1,6 +1,8 @@
 {
   "action": {
     "add-asset": "Add asset",
+    "delete": "Delete",
+    "update": "Update",
     "submit": "Place order"
   },
   "action-selection": {

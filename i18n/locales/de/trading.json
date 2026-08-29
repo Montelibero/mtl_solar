@@ -1,6 +1,8 @@
 {
   "action": {
     "add-asset": "Asset hinzufügen",
+    "delete": "Löschen",
+    "update": "Aktualisieren",
     "submit": "Order platzieren"
   },
   "action-selection": {

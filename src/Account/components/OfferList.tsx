@@ -1,15 +1,13 @@
 import BigNumber from "big.js"
 import React from "react"
 import { Trans, useTranslation } from "react-i18next"
-import { Operation, Horizon, Transaction } from "@stellar/stellar-sdk"
+import { Asset, Operation, Horizon, Transaction } from "@stellar/stellar-sdk"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
-import makeStyles from "@material-ui/core/styles/makeStyles"
 import ArrowRightIcon from "@material-ui/icons/ArrowRightAlt"
 import BarChartIcon from "@material-ui/icons/BarChart"
 import { Account } from "~App/contexts/accounts"
-import { breakpoints } from "~App/theme"
 import { trackError } from "~App/contexts/notifications"
 import { ActionButton } from "~Generic/components/DialogActions"
 import { useHorizon } from "~Generic/hooks/stellar"
@@ -23,6 +21,40 @@ import { HorizontalLayout } from "~Layout/components/Box"
 import { List } from "~Layout/components/List"
 import TransactionSender from "~Transaction/components/TransactionSender"
 import { SingleBalance } from "./AccountBalances"
+
+export interface OfferEditorState {
+  offerId: string | number
+  price: string
+  primaryAction: "buy" | "sell"
+  primaryAmountString: string
+  primaryAsset: Asset
+  secondaryAsset: Asset
+}
+
+export function getOfferEditorState(accountPublicKey: string, offer: Horizon.ServerApi.OfferRecord): OfferEditorState {
+  const buying = horizonAssetToAsset(offer.buying)
+  const selling = horizonAssetToAsset(offer.selling)
+
+  if (offer.seller === accountPublicKey && !selling.isNative()) {
+    return {
+      offerId: offer.id,
+      price: offer.price,
+      primaryAction: "sell",
+      primaryAmountString: offer.amount,
+      primaryAsset: selling,
+      secondaryAsset: buying
+    }
+  }
+
+  return {
+    offerId: offer.id,
+    price: offer.price,
+    primaryAction: "buy",
+    primaryAmountString: String(BigNumber(offer.amount).mul(offer.price)),
+    primaryAsset: buying,
+    secondaryAsset: selling
+  }
+}
 
 function createDismissalTransaction(
   horizon: Horizon.Server,
@@ -63,7 +95,7 @@ function createDismissalTransaction(
 interface OfferListItemProps {
   accountPublicKey: string
   offer: Horizon.ServerApi.OfferRecord
-  onCancel?: () => void
+  onSelect?: () => void
   style?: React.CSSProperties
 }
 
@@ -73,8 +105,8 @@ const OfferListItem = React.memo(function OfferListItem(props: OfferListItemProp
   const isSmallScreen = useIsMobile()
   return (
     <ListItem
-      button={Boolean(props.onCancel) as any}
-      onClick={props.onCancel}
+      button={Boolean(props.onSelect) as any}
+      onClick={props.onSelect}
       style={{ minHeight: isSmallScreen ? 58 : 72, ...props.style }}
     >
       <ListItemIcon style={{ marginRight: isSmallScreen ? 0 : undefined }}>
@@ -171,40 +203,9 @@ const LoadMoreOffersListItem = React.memo(function LoadMoreOffersListItem(props:
 
 interface Props {
   account: Account
+  onSelectOffer?: (offer: Horizon.ServerApi.OfferRecord) => void
   title: React.ReactNode
 }
-
-const useStyles = makeStyles({
-  expansionPanel: {
-    background: "transparent",
-
-    "&:before": {
-      background: "transparent"
-    }
-  },
-  expansionPanelSummary: {
-    justifyContent: "flex-start",
-    minHeight: "48px !important",
-    padding: 0
-  },
-  expansionPanelSummaryContent: {
-    flexGrow: 0,
-    marginTop: "0 !important",
-    marginBottom: "0 !important"
-  },
-  expansionPanelDetails: {
-    display: "block",
-    padding: 0
-  },
-  listItem: {
-    padding: "8px 24px",
-
-    [breakpoints.down(600)]: {
-      paddingLeft: 24,
-      paddingRight: 24
-    }
-  }
-})
 
 function OfferList(props: Props & { sendTransaction: (tx: Transaction) => Promise<void> }) {
   const accountData = useLiveAccountData(props.account.accountID, props.account.testnet)
@@ -234,7 +235,7 @@ function OfferList(props: Props & { sendTransaction: (tx: Transaction) => Promis
           key={offer.id}
           accountPublicKey={props.account.accountID}
           offer={offer}
-          onCancel={() => onCancel(offer)}
+          onSelect={props.onSelectOffer ? () => props.onSelectOffer!(offer) : () => onCancel(offer)}
         />
       ))}
       {offerHistory.olderOffersAvailable ? (

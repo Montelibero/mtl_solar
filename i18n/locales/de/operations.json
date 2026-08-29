@@ -34,7 +34,7 @@
   "manage-buy-offer": {
     "title": {
       "create": "Kauforder erstellen",
-      "delete": "Kauforder",
+      "delete": "Kauforder löschen",
       "update": "Kauforder aktualisieren"
     }
   },
@@ -50,7 +50,7 @@
   "manage-sell-offer": {
     "title": {
       "create": "Verkaufsorder erstellen",
-      "delete": "Verkaufsorder",
+      "delete": "Verkaufsorder löschen",
       "update": "Verkaufsorder aktualisieren"
     }
   },

@@ -11,6 +11,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 import TextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import useMediaQuery from "@material-ui/core/useMediaQuery"
+import DeleteIcon from "@material-ui/icons/Delete"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import GavelIcon from "@material-ui/icons/Gavel"
 import { Account } from "~App/contexts/accounts"
@@ -34,6 +35,7 @@ import {
 import { FormBigNumber, isValidAmount } from "~Generic/lib/form"
 import { createTransaction } from "~Generic/lib/transaction"
 import { Box, HorizontalLayout, VerticalLayout } from "~Layout/components/Box"
+import { type OfferEditorState } from "~Account/components/OfferList"
 import { bigNumberToInputValue, TradingFormValues, useCalculation } from "../hooks/form"
 import TradingPrice from "./TradingPrice"
 
@@ -69,11 +71,12 @@ interface Props {
   accountData: AccountData
   className?: string
   dialogActionsRef: RefStateObject | null
+  editOffer?: OfferEditorState
   initialPrimaryAsset?: Asset
   primaryAction: "buy" | "sell"
   sendTransaction: (transaction: Transaction) => void
   style?: React.CSSProperties
-  trustlines: Horizon.BalanceLineAsset[]
+  trustlines: Horizon.HorizonApi.BalanceLineAsset[]
 }
 
 function TradingForm(props: Props) {
@@ -89,10 +92,10 @@ function TradingForm(props: Props) {
 
   const form = useForm<TradingFormValues>({
     defaultValues: {
-      primaryAsset: props.initialPrimaryAsset,
-      primaryAmountString: "",
-      secondaryAsset: Asset.native(),
-      manualPrice: "0"
+      primaryAsset: props.editOffer ? props.editOffer.primaryAsset : props.initialPrimaryAsset,
+      primaryAmountString: props.editOffer ? props.editOffer.primaryAmountString : "",
+      secondaryAsset: props.editOffer ? props.editOffer.secondaryAsset : Asset.native(),
+      manualPrice: props.editOffer ? props.editOffer.price : "0"
     }
   })
 
@@ -145,6 +148,58 @@ function TradingForm(props: Props) {
     form.setValue("primaryAmountString", maxPrimaryAmount.toFixed(7))
   }
 
+  const createUpdateOperation = React.useCallback(() => {
+    if (!primaryAsset) {
+      throw CustomError(
+        "InvariantViolationError",
+        "Invariant violation: Should not be able to submit form without having selected the primary asset.",
+        { message: "Should not be able to submit form without having selected the primary asset." }
+      )
+    }
+
+    return props.primaryAction === "buy"
+      ? Operation.manageBuyOffer({
+          buyAmount: primaryAmount.toFixed(7),
+          buying: primaryAsset,
+          offerId: props.editOffer ? props.editOffer.offerId : 0,
+          price: effectivePrice.toFixed(7),
+          selling: secondaryAsset,
+          withMuxing: true
+        })
+      : Operation.manageSellOffer({
+          amount: primaryAmount.toFixed(7),
+          buying: secondaryAsset,
+          offerId: props.editOffer ? props.editOffer.offerId : 0,
+          price: effectivePrice.toFixed(7),
+          selling: primaryAsset,
+          withMuxing: true
+        })
+  }, [effectivePrice, primaryAmount, primaryAsset, props.editOffer, props.primaryAction, secondaryAsset])
+
+  const createDeleteOperation = React.useCallback(() => {
+    if (!props.editOffer) {
+      throw CustomError("InvariantViolationError", "Invariant violation: Cannot delete an offer outside edit mode.")
+    }
+
+    return props.editOffer.primaryAction === "buy"
+      ? Operation.manageBuyOffer({
+          buyAmount: "0",
+          buying: props.editOffer.primaryAsset,
+          offerId: props.editOffer.offerId,
+          price: props.editOffer.price,
+          selling: props.editOffer.secondaryAsset,
+          withMuxing: true
+        })
+      : Operation.manageSellOffer({
+          amount: "0",
+          buying: props.editOffer.secondaryAsset,
+          offerId: props.editOffer.offerId,
+          price: props.editOffer.price,
+          selling: props.editOffer.primaryAsset,
+          withMuxing: true
+        })
+  }, [props.editOffer])
+
   const validateManualPrice = React.useCallback(() => {
     const value = FormBigNumber(manualPrice).gt(0) ? manualPrice : defaultPrice
     const valid = isValidAmount(value) && FormBigNumber(value).gt(0)
@@ -166,14 +221,6 @@ function TradingForm(props: Props) {
         return
       }
 
-      if (!primaryAsset) {
-        throw CustomError(
-          "InvariantViolationError",
-          "Invariant violation: Should not be able to submit form without having selected the primary asset.",
-          { message: "Should not be able to submit form without having selected the primary asset." }
-        )
-      }
-
       const spendableXLMBalance = getSpendableBalance(
         getAccountMinimumBalance(props.accountData),
         findMatchingBalanceLine(props.accountData.balances, Asset.native())
@@ -183,25 +230,7 @@ function TradingForm(props: Props) {
       }
 
       const tx = await createTransaction(
-        [
-          props.primaryAction === "buy"
-            ? Operation.manageBuyOffer({
-                buyAmount: primaryAmount.toFixed(7),
-                buying: primaryAsset,
-                offerId: 0,
-                price: effectivePrice.toFixed(7),
-                selling: secondaryAsset,
-                withMuxing: true
-              })
-            : Operation.manageSellOffer({
-                amount: primaryAmount.toFixed(7),
-                buying: secondaryAsset,
-                offerId: 0,
-                price: effectivePrice.toFixed(7),
-                selling: primaryAsset,
-                withMuxing: true
-              })
-        ],
+        [createUpdateOperation()],
         {
           accountData: props.accountData,
           horizon,
@@ -215,18 +244,31 @@ function TradingForm(props: Props) {
       setPending(false)
     }
   }, [
+    createUpdateOperation,
     form,
-    effectivePrice,
     horizon,
-    primaryAsset,
     props.account,
     props.accountData,
-    props.primaryAction,
-    primaryAmount,
-    secondaryAsset,
     sendTransaction,
     validateManualPrice
   ])
+
+  const deleteOffer = React.useCallback(async () => {
+    try {
+      setPending(true)
+
+      const tx = await createTransaction([createDeleteOperation()], {
+        accountData: props.accountData,
+        horizon,
+        walletAccount: props.account
+      })
+      await sendTransaction(tx)
+    } catch (error) {
+      trackError(error)
+    } finally {
+      setPending(false)
+    }
+  }, [createDeleteOperation, horizon, props.account, props.accountData, sendTransaction])
 
   return (
     // set minHeight to prevent wrapping of layout when keyboard is shown
@@ -436,11 +478,22 @@ function TradingForm(props: Props) {
           </Box>
         ) : null}
         <Portal target={props.dialogActionsRef?.element}>
-          <DialogActionsBox desktopStyle={{ marginTop: 0 }}>
-            <ActionButton loading={pending} icon={<GavelIcon />} onClick={form.handleSubmit(submitForm)} type="primary">
-              {t("trading.action.submit")}
-            </ActionButton>
-          </DialogActionsBox>
+          {props.editOffer ? (
+            <DialogActionsBox desktopStyle={{ marginTop: 0 }} expandedHeight>
+              <ActionButton loading={pending} icon={<GavelIcon />} onClick={form.handleSubmit(submitForm)} type="primary">
+                {t("trading.action.update")}
+              </ActionButton>
+              <ActionButton loading={pending} icon={<DeleteIcon />} onClick={deleteOffer} type="secondary">
+                {t("trading.action.delete")}
+              </ActionButton>
+            </DialogActionsBox>
+          ) : (
+            <DialogActionsBox desktopStyle={{ marginTop: 0 }}>
+              <ActionButton loading={pending} icon={<GavelIcon />} onClick={form.handleSubmit(submitForm)} type="primary">
+                {t("trading.action.submit")}
+              </ActionButton>
+            </DialogActionsBox>
+          )}
         </Portal>
       </VerticalLayout>
     </VerticalLayout>

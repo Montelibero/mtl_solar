@@ -1,6 +1,8 @@
 {
   "action": {
     "add-asset": "Añadir activo",
+    "delete": "Eliminar",
+    "update": "Actualizar",
     "submit": "Enviar orden"
   },
   "action-selection": {

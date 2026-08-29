@@ -22,7 +22,7 @@ import { getLastArgumentFromURL } from "~Generic/lib/url"
 import DialogBody from "~Layout/components/DialogBody"
 import { HorizontalLayout, VerticalLayout } from "~Layout/components/Box"
 import TransactionSender, { SendTransaction } from "~Transaction/components/TransactionSender"
-import OfferList from "~Account/components/OfferList"
+import OfferList, { getOfferEditorState, type OfferEditorState } from "~Account/components/OfferList"
 import SwapForm from "./SwapForm"
 import TradingForm from "./TradingForm"
 
@@ -56,6 +56,7 @@ function TradingDialog(props: TradingDialogProps) {
   const dialogActionsRef = useDialogActions()
   const router = useRouter()
   const isMobile = useIsMobile()
+  const [editOffer, setEditOffer] = React.useState<OfferEditorState | undefined>()
   const [preselectedAsset, setPreselectedAsset] = React.useState<Asset | undefined>()
   const { t } = useTranslation()
 
@@ -73,18 +74,36 @@ function TradingDialog(props: TradingDialogProps) {
   const tradeMode = getTradeMode(router.location.pathname)
 
   const navigateToSwap = React.useCallback(() => {
+    setEditOffer(undefined)
     router.history.push(
       routes.tradeAsset(props.account.id, "swap", preselectedAsset ? stringifyAsset(preselectedAsset) : undefined)
     )
   }, [preselectedAsset, props.account, router.history])
 
+  const navigateToOrders = React.useCallback(() => {
+    setEditOffer(undefined)
+    router.history.push(routes.tradeAsset(props.account.id, "orders"))
+  }, [props.account, router.history])
+
   const selectTradeMode = React.useCallback(
     (mode: TradeMode) => {
+      setEditOffer(undefined)
       router.history.push(
         routes.tradeAsset(props.account.id, mode, preselectedAsset ? stringifyAsset(preselectedAsset) : undefined)
       )
     },
     [preselectedAsset, props.account, router.history]
+  )
+
+  const selectOffer = React.useCallback(
+    (offer: Horizon.ServerApi.OfferRecord) => {
+      const editorState = getOfferEditorState(props.account.accountID, offer)
+      setEditOffer(editorState)
+      router.history.push(
+        routes.tradeAsset(props.account.id, editorState.primaryAction, stringifyAsset(editorState.primaryAsset))
+      )
+    },
+    [props.account, router.history]
   )
 
   const ModeSelector = React.useMemo(
@@ -118,7 +137,11 @@ function TradingDialog(props: TradingDialogProps) {
         <React.Suspense fallback={<ViewLoading />}>
           {tradeMode === "orders" ? (
             <Box margin="24px 0 0">
-              <OfferList account={props.account} title={t("account.transactions.offer-list.title")} />
+              <OfferList
+                account={props.account}
+                onSelectOffer={selectOffer}
+                title={t("account.transactions.offer-list.title")}
+              />
             </Box>
           ) : tradeMode === "swap" ? (
             <SwapForm
@@ -130,9 +153,11 @@ function TradingDialog(props: TradingDialogProps) {
             />
           ) : (
             <TradingForm
+              key={`${tradeMode}-${editOffer?.offerId || "new"}`}
               account={props.account}
               accountData={accountData}
               dialogActionsRef={dialogActionsRef}
+              editOffer={editOffer}
               initialPrimaryAsset={preselectedAsset}
               primaryAction={tradeMode}
               sendTransaction={props.sendTransaction}
@@ -146,9 +171,11 @@ function TradingDialog(props: TradingDialogProps) {
       ModeSelector,
       accountData,
       dialogActionsRef,
+      editOffer,
       preselectedAsset,
       props.account,
       props.sendTransaction,
+      selectOffer,
       t,
       tradeMode,
       trustlines
@@ -186,7 +213,13 @@ function TradingDialog(props: TradingDialogProps) {
                 {props.account.testnet ? <TestnetBadge style={{ marginLeft: 8 }} /> : null}
               </span>
             }
-            onBack={tradeMode === "buy" || tradeMode === "sell" || tradeMode === "orders" ? navigateToSwap : props.onClose}
+            onBack={
+              editOffer
+                ? navigateToOrders
+                : tradeMode === "buy" || tradeMode === "sell" || tradeMode === "orders"
+                ? navigateToSwap
+                : props.onClose
+            }
           />
           <ScrollableBalances account={props.account} compact />
         </>

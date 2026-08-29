@@ -1,6 +1,8 @@
 {
   "action": {
     "add-asset": "Aggiungi risorsa",
+    "delete": "Elimina",
+    "update": "Aggiorna",
     "submit": "Invia ordine"
   },
   "action-selection": {

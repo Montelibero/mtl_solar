@@ -1,6 +1,8 @@
 {
   "action": {
     "add-asset": "Добавить актив",
+    "delete": "Удалить",
+    "update": "Обновить",
     "submit": "Разместить ордер"
   },
   "action-selection": {

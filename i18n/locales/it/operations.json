@@ -34,7 +34,7 @@
   "manage-buy-offer": {
     "title": {
       "create": "Crea ordine di acquisto",
-      "delete": "Cancella l'ordine",
+      "delete": "Elimina ordine di acquisto",
       "update": "Aggiorna ordine di acquisto"
     }
   },
@@ -50,7 +50,7 @@
   "manage-sell-offer": {
     "title": {
       "create": "Crea ordine di vendita",
-      "delete": "Cancella l'ordine",
+      "delete": "Elimina ordine di vendita",
       "update": "Aggiorna ordine di vendita"
     }
   },
