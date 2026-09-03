@@ -79,7 +79,7 @@
     "observable-fns": "^0.5.0",
     "p-queue": "^6.2.0",
     "qrcode.react": "^0.9.3",
-    "qs": "^6.15.2",
+    "qs": "^6.16.0",
     "react": "^16.0.1",
     "react-content-loader": "^4.2.2",
     "react-contenteditable": "^3.3.2",
